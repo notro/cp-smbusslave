@@ -13,16 +13,11 @@ def pytest_addoption(parser):
     group.addoption("--smbus-timeout", default=True, dest='smbus_timeout', type=bool, help='Use SMBUS timeout limit (default: True)')
 
 
-@pytest.fixture(scope='session')
-def board(request):
-    board = cpboard.CPboard.from_try_all(request.config.option.boarddev)
-    board.open()
-    board.repl.reset()
-    return board
-
-
 @pytest.fixture
 def bus(request):
+    """
+    Return a smbus.SMBus instance (function scope)
+    """
     return smbus.SMBus(request.config.option.i2cbus)
 
 
@@ -55,6 +50,9 @@ def check_digital_connect(pin0, pin1):
 
 @pytest.fixture(scope='session')
 def digital_connect(board):
+    """
+    Return board pins that are wired together
+    """
     # FIXME: Make it possible to overrride these
     pin0 = 'A0'
     pin1 = 'A1'
@@ -107,6 +105,9 @@ def check_host_connect(board, gpio, pin):
 
 @pytest.fixture(scope='session')
 def host_connect(request, board):
+    """
+    Return board and host pins that are wired together
+    """
     # FIXME: Make it possible to overrride these
     pin = 'D5'
     gpionr = 17
