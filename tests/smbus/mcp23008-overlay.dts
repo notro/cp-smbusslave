@@ -1,0 +1,49 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2835";
+
+	fragment@0 {
+		target = <&gpio>;
+		__overlay__ {
+			mcp23008_pins: mcp23008_pins {
+				brcm,pins = <17>;
+				brcm,function = <0>;	/* in */
+				brcm,pull = <2>;	/* up */
+			};
+		};
+	};
+
+	fragment@1 {
+		target-path = "/i2c@1";
+		__overlay__ {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			mcp23008: mcp@20 {
+				compatible = "microchip,mcp23008";
+				reg = <0x20>;
+
+				pinctrl-names = "default";
+				pinctrl-0 = <&mcp23008_pins>;
+
+				gpio-controller;
+				#gpio-cells = <2>;
+
+				#interrupt-cells=<2>;
+				interrupt-parent = <&gpio>;
+				interrupts = <17 8>; /* IRQF_TRIGGER_LOW */
+				interrupt-controller;
+
+				status = "okay";
+			};
+		};
+	};
+
+	__overrides__ {
+		intgpio = <&mcp23008_pins>,"brcm,pins:0",
+			  <&mcp23008>,"interrupts:0";
+		addr = <&mcp23008>,"reg:0";
+	};
+};
