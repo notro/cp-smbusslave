@@ -10,14 +10,14 @@ if not pytest.config.option.i2cbus:
 
 def ds1307slave_func(addresses):
     import board
-    import busio
     import time
     import ds1307slave
     import rtc
+    from i2cslave import I2CSlave
 
     ds1307 = ds1307slave.DS1307Slave(rtc.RTC())
 
-    with busio.I2CSlave(board.SCL, board.SDA, addresses, smbus=False) as slave:
+    with I2CSlave(board.SCL, board.SDA, addresses, smbus=False) as slave:
         while True:
             try:
                 r = slave.request(timeout=2)

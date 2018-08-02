@@ -10,12 +10,12 @@ if not pytest.config.option.i2cbus:
 
 def read_byte_slave_func(tout, addresses, data):
     import board
-    import busio
+    from i2cslave import I2CSlave
 
     data = bytes(data)
     print('read_byte_slave_func:', tout, repr(data))
 
-    with busio.I2CSlave(board.SCL, board.SDA, addresses, smbus=tout) as slave:
+    with I2CSlave(board.SCL, board.SDA, addresses, smbus=tout) as slave:
         while True:
             try:
                 r = slave.request()

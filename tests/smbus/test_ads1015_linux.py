@@ -12,9 +12,9 @@ if not pytest.config.option.i2cbus:
 
 def ads1015slave_func(tout, address):
     import board
-    import busio
     import analogio
     import ads1015slave
+    from i2cslave import I2CSlave
 
     class MockAnalogIn:
         v = 0
@@ -30,7 +30,7 @@ def ads1015slave_func(tout, address):
     ads1015 = ads1015slave.ADS1015Slave([adc0, adc1])
     #ads1015.debug = True
 
-    with busio.I2CSlave(board.SCL, board.SDA, (address,), smbus=tout) as slave:
+    with I2CSlave(board.SCL, board.SDA, (address,), smbus=tout) as slave:
         while True:
             try:
                 r = slave.request()

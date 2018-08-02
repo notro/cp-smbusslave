@@ -17,9 +17,9 @@ address = 0x20
 
 def mcp23008slave_func(tout, address, pins, intpin):
     import board
-    import busio
     import digitalio
     import mcp23008slave
+    from i2cslave import I2CSlave
 
 
     tout = False  # Needed while printing stuff for debugging
@@ -48,7 +48,7 @@ def mcp23008slave_func(tout, address, pins, intpin):
         dump_regs()
 
 
-    with busio.I2CSlave(board.SCL, board.SDA, (address,), smbus=tout) as slave:
+    with I2CSlave(board.SCL, board.SDA, (address,), smbus=tout) as slave:
         while True:
             mcp23008.check_events()
             try:

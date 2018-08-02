@@ -12,8 +12,8 @@ if not pytest.config.option.i2cbus:
 
 def  at24slave_func(address):
     import board
-    import busio
     import at24slave
+    from i2cslave import I2CSlave
 
     # Adapted from CPython
     class BytesIO:
@@ -55,7 +55,7 @@ def  at24slave_func(address):
     at24 =  at24slave.AT24Slave(file)
     #at24.debug= True
 
-    with busio.I2CSlave(board.SCL, board.SDA, (address,), smbus=False) as slave:
+    with I2CSlave(board.SCL, board.SDA, (address,), smbus=False) as slave:
         while True:
             try:
                 r = slave.request()

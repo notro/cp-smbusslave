@@ -10,7 +10,7 @@ if not pytest.config.option.i2cbus:
 
 def slave_func(tout, addresses, protocol):
     import board
-    import busio
+    from i2cslave import I2CSlave
     from smbusslave import SMBusSlave
 
     class Slave(SMBusSlave):
@@ -44,7 +44,7 @@ def slave_func(tout, addresses, protocol):
     print('\nboard: slave_func:', ','.join(['0x%02x' % (addr,) for addr in addresses]), 'prot:', protocol)
     bs = Slave(protocol)
 
-    with busio.I2CSlave(board.SCL, board.SDA, addresses, smbus=tout) as slave:
+    with I2CSlave(board.SCL, board.SDA, addresses, smbus=tout) as slave:
         while True:
             try:
                 r = slave.request()

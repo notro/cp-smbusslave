@@ -10,10 +10,10 @@ if not pytest.config.option.i2cbus:
 
 def request_slave_func(tout, addresses, delay_ms):
     import board
-    import busio
     import time
+    from i2cslave import I2CSlave
 
-    with busio.I2CSlave(board.SCL, board.SDA, addresses, smbus=tout) as slave:
+    with I2CSlave(board.SCL, board.SDA, addresses, smbus=tout) as slave:
         while True:
             r = slave.request()
             if not r:
