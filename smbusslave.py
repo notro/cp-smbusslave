@@ -7,7 +7,7 @@ class SMBusSlave:
 
     def __init__(self):
         self.max_reg = 0
-        self.debug = False
+        self.debug = 0
 
     def writereg(self, reg, val):
         raise NotImplementedError
@@ -28,10 +28,10 @@ class SMBusSlave:
                 self.regnr = 0
 
     def _read_byte(self, req):
-        if self.debug:
+        if self.debug > 1:
             print("_read_byte: ", end='')
         byte = req.read(1)
-        if self.debug:
+        if self.debug > 1:
             print(byte)
         if not byte:
             return False
@@ -41,8 +41,8 @@ class SMBusSlave:
 
     def _write_byte(self, req):
         byte = self.readreg(self.regnr)
-        if self.debug:
-            print(" byte=0x%02x" % byte, end='', flush=True)
+        if self.debug > 1:
+            print(" byte=0x%02x" % (byte,), end='')
         if req.write(byte.to_bytes(1, 'little')) != 1:
             return False
         self._seq_reg_inc()
@@ -58,8 +58,8 @@ class SMBusSlave:
 
     def _write_word(self, req):
         word = self.readreg(self.regnr)
-        if self.debug:
-            print(" word=0x%04x" % word, end='', flush=True)
+        if self.debug > 1:
+            print(" word=0x%04x" % (word,), end='')
         if req.write(word.to_bytes(2, 'little')) != 2:
             return False
         self._seq_reg_inc()
@@ -69,7 +69,7 @@ class SMBusSlave:
         if not req.is_read:
             cmd = req.read(1, ack=False)
             if self.debug:
-                print("process write: ", cmd)
+                print("process write:", cmd)
             if not cmd:
                 return False
             if not self.command(cmd[0]):
