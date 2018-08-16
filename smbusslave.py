@@ -67,16 +67,19 @@ class SMBusSlave:
 
     def process(self, req):
         if not req.is_read:
-            cmd = req.read(1, ack=False)
-            if self.debug:
-                print("process write:", cmd)
-            if not cmd:
-                return False
-            if not self.command(cmd[0]):
-                req.ack(False)
-                return False
-
-            req.ack(True)
+            if not req.is_restart:
+                cmd = req.read(1, ack=False)
+                if self.debug:
+                    print("process write:", cmd)
+                if not cmd:
+                    return False
+                if not self.command(cmd[0]):
+                    req.ack(False)
+                    return False
+                req.ack(True)
+            else:
+                if self.debug:
+                    print("process restart write:")
 
             if self.debug:
                 print("self.regnr =", self.regnr)
@@ -97,7 +100,7 @@ class SMBusSlave:
 
         elif req.is_restart:
             if self.debug:
-                print("process restart: ")
+                print("process restart read:")
             if self.protocol == SMBusSlave.SMBUS_BYTE:
                 return self._write_byte(req)
             elif self.protocol == SMBusSlave.SMBUS_BYTE_SEQ:
@@ -113,5 +116,6 @@ class SMBusSlave:
             else:
                 raise NotImplementedError
         else:
-            print("process NOTHING: ")
+            if self.debug:
+                print("process NOTHING (not write nor restart)")
             return False

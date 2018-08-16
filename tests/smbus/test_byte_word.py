@@ -88,6 +88,9 @@ class TestByte:
     ]
     test_reg_data_ids = ['%02x=%02x' % (d[0], d[1]) for d in test_reg_data]
 
+    # This doesn't test [write reg] - [restart] - [write byte] ie. 2 I2C messages in the transfer.
+    # Linux concatenates the two write messages into one for I2C adapters in i2c_smbus_xfer_emulated().
+
     @pytest.mark.parametrize('reg, val', test_reg_data, ids=test_reg_data_ids)
     def test_write(self, bus, reg, val):
         try:
