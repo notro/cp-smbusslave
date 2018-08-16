@@ -26,7 +26,7 @@ class DS1307Slave(SMBusSlave):
         elif reg == 0x02:
             val = bin2bcd(t.tm_hour)
         elif reg == 0x03:
-            val = bin2bcd(t.tm_wday)
+            val = bin2bcd(t.tm_wday + 1)
         elif reg == 0x04:
             val = bin2bcd(t.tm_mday)
         elif reg == 0x05:
@@ -50,6 +50,7 @@ class DS1307Slave(SMBusSlave):
             return
         elif reg > 0x07:
             self.writeram(reg - 0x08, val)
+            return
 
         t = list(self.rtc.datetime)
 
@@ -61,7 +62,7 @@ class DS1307Slave(SMBusSlave):
         elif reg == 0x02:
             t[3] = bcd2bin(val)
         elif reg == 0x03:
-            t[6] = bcd2bin(val)
+            t[6] = bcd2bin(val) - 1
         elif reg == 0x04:
             t[2] = bcd2bin(val)
         elif reg == 0x05:
